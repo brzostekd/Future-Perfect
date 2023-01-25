@@ -53,12 +53,12 @@
 - STATUS ENUM
 
         {
-            PENDING ,
-            CURRENT ,
-            DONE
+            Pending,
+            Current,
+            Done
         }
 
-- board
+- Board
 
         {
             id: ObjectId,
@@ -66,7 +66,7 @@
             created_at: Date,
         }
 
-- goal
+- Goal
 
         {
             id: ObjectId,
@@ -75,12 +75,12 @@
             board_id: ObjectId,
             tasks_count: number
             tasks_done_count: number
-            tasks: task[],
+            tasks: Task[],
             <!-- activity_history: board_history, -->
             is_current: boolean
         }
 
-- task
+- Task
 
         {
             id: ObjectId,
@@ -109,7 +109,7 @@
             ]
         } -->
 
-- timer
+- Timer
 
         {
             task_id: ObjectId,
