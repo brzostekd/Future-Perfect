@@ -14,10 +14,12 @@ function App() {
       sx={{
         "*::-webkit-scrollbar": { width: "3", paddingRight: "2px" },
         "*::-webkit-scrollbar-thumb": {
-          backgroundColor: "teal.500",
+          backgroundColor: "blackAlpha.200",
           borderRadius: "full",
         },
-        "*::-webkit-scrollbar-thumb:hover": { backgroundColor: "teal.600" },
+        "*::-webkit-scrollbar-thumb:hover": {
+          backgroundColor: "blackAlpha.300",
+        },
       }}
     >
       <Flex

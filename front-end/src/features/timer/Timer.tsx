@@ -18,7 +18,9 @@ const Timer = (props: StackProps) => (
     margin={"5"}
     spacing="3"
   >
-    <Clock></Clock>
+    <Clock
+    //  fraction={1 / 3}
+     ></Clock>
     <VStack>
       <Text fontSize={"md"} textAlign={"center"}>
         Current task:
@@ -43,4 +45,4 @@ const Timer = (props: StackProps) => (
   </VStack>
 );
 
-export default Timer;
+export { Timer };

@@ -35,7 +35,7 @@ const Passcode = () => {
           "linear-gradient(0deg, var(--chakra-colors-teal-300) 0%,var( --chakra-colors-teal-200) 40%)"
         }
       >
-        <Heading fontSize={"3xl"}>
+        <Heading fontSize={"4xl"} color={"teal.900"}>
           Welcome to <i>Future Perfect!</i>
         </Heading>
         <Text fontSize={"xl"}>

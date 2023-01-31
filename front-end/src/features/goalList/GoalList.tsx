@@ -18,7 +18,8 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, SearchIcon } from "@chakra-ui/icons";
 import { GoalItem } from "./GoalItem";
-import AddGoalModal from "./AddGoalModal";
+import { useContext } from "react";
+import { ModalContext } from "../../contexts";
 const GoalList = (props: FlexProps) => {
   const COLORS = [
     "red",
@@ -31,7 +32,11 @@ const GoalList = (props: FlexProps) => {
     "purple",
     "pink",
   ] as const;
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+
+  let modalContext = useContext(ModalContext);
+  if (!modalContext)
+    throw Error("modalContext is undefined. Wrong usage of GoalList comonent.");
   return (
     <Box {...props} position="relative">
       <VStack
@@ -51,20 +56,25 @@ const GoalList = (props: FlexProps) => {
       </VStack>
       <IconButton
         isRound={true}
-        onClick={onOpen}
+        onClick={() => {
+          if (!modalContext)
+            throw Error(
+              "modalContext is undefined. Wrong usage of GoalList comonent."
+            );
+          modalContext.dispatchModal({ type: "setCreate" });
+          modalContext.onOpen();
+        }}
         aria-label="Create new goal"
         position={"absolute"}
         bottom={"4"}
         right={"6"}
-        w={"16"}
-        h={"16"}
+        size={"lg"}
         colorScheme={"teal"}
         shadow={"base"}
-        icon={<AddIcon boxSize={"8"} />}
-      />{" "}
-      <AddGoalModal isOpen={isOpen} onClose={onClose} onPrimary={() => {}} />
+        icon={<AddIcon boxSize={"6"} />}
+      />
     </Box>
   );
 };
 
-export default GoalList;
+export { GoalList };

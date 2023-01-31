@@ -1,5 +1,12 @@
-const ClockCircle = ({ fraction }: { fraction?: number }) => {
-  fraction ??= 1;
+import { transition } from "@chakra-ui/react";
+
+const ClockCircle = ({
+  fraction = 1,
+  animate = true,
+}: {
+  fraction?: number;
+  animate?: boolean;
+}) => {
   const WH = 100;
   const STROKEW = 4;
   const R = WH / 2 - STROKEW / 2;
@@ -40,6 +47,14 @@ const ClockCircle = ({ fraction }: { fraction?: number }) => {
         strokeDashoffset={String(CIRCUMFERENCE - CIRCUMFERENCE * fraction)}
         strokeWidth={STROKEW}
         transform={`rotate(-90 ${WH / 2} ${WH / 2})`}
+        style={
+          animate
+            ? {
+                transition:
+                  "stroke-dashoffset 1s cubic-bezier(0.1, 0.01, 0.01, 1.0)",
+              }
+            : {}
+        }
       ></circle>
     </svg>
   );
