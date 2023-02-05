@@ -1,42 +1,16 @@
-import {
-  Box,
-  IconButton,
-  StackProps,
-  VStack,
-  Text,
-  Flex,
-  FlexProps,
-  useDisclosure,
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
-import { AddIcon, SearchIcon } from "@chakra-ui/icons";
+import { Box, IconButton, VStack, FlexProps } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 import { GoalItem } from "./GoalItem";
 import { useContext } from "react";
-import { ModalContext } from "../../contexts";
+import { GoalsContext, ModalContext } from "../../contexts";
+// const GoalList = ({ goals, ...props }: { goals: Goal[] } & FlexProps) => {
 const GoalList = (props: FlexProps) => {
-  const COLORS = [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "teal",
-    "cyan",
-    "blue",
-    "purple",
-    "pink",
-  ] as const;
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const goalsContext = useContext(GoalsContext);
+  if (!goalsContext) throw Error("GoalsContext is undefined.");
+  const [goals, dispatchGoals] = goalsContext;
 
   let modalContext = useContext(ModalContext);
-  if (!modalContext)
-    throw Error("modalContext is undefined. Wrong usage of GoalList comonent.");
+  if (!modalContext) throw Error("modalContext is undefined.");
   return (
     <Box {...props} position="relative">
       <VStack
@@ -49,9 +23,8 @@ const GoalList = (props: FlexProps) => {
         marginRight={"1"}
         borderLeftRadius={{ md: "32" }}
       >
-        <GoalItem selected={true} />
-        {COLORS.map((c) => (
-          <GoalItem key={c} color={c} />
+        {goals.map((goal, index) => (
+          <GoalItem goal={goal} goalIndex={index} key={goal.id.toString()} />
         ))}
       </VStack>
       <IconButton
@@ -69,9 +42,9 @@ const GoalList = (props: FlexProps) => {
         bottom={"4"}
         right={"6"}
         size={"lg"}
+        zIndex={1}
         colorScheme={"teal"}
-        shadow={"base"}
-        icon={<AddIcon boxSize={"6"} />}
+        icon={<AddIcon boxSize={"8"} />}
       />
     </Box>
   );

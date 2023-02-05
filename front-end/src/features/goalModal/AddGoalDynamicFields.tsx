@@ -1,86 +1,128 @@
 import {
   HStack,
   FormControl,
+  Input,
+  Button,
+  VStack,
+  FormErrorMessage,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  Input,
-  Button,
-  Box,
-  VStack,
 } from "@chakra-ui/react";
 import { ObjectId } from "bson";
-import { FieldArray, Field, FormikProps } from "formik";
+import {
+  FieldArray,
+  Field,
+  FormikProps,
+  FieldArrayRenderProps,
+  FormikErrors,
+  FastField,
+} from "formik";
+import React from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Goal, STATUS, Task } from "../../types/Index";
-import { handleAddPriority } from "../../utils";
+import { castPriorityToNumber, handleAddPriority } from "../../utils";
+
+const validateTaskNameField = (v: string) => {
+  if (!v) return "Please, provide a name of the task";
+};
 
 const AddGoalDynamicFields = ({
   formikProps,
 }: {
   formikProps: FormikProps<Goal>;
 }) => {
+  const [timeoutId, setTimeoutId] = useState<undefined | NodeJS.Timeout>();
+  const handleNumberInputFieldChange = (index: number) => (e: any) => {
+    formikProps.handleChange(e);
+    clearTimeout(timeoutId);
+    setTimeoutId(
+      setTimeout(() => {
+        castPriorityToNumber(formikProps, index);
+      }, 60)
+    );
+  };
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [timeoutId]);
+
   return (
     <FieldArray name="tasks">
       {(arrayHelpers) => (
         <>
-          <VStack maxHeight={"md"} overflowY={"scroll"} alignItems={"stretch"}>
-            {formikProps.values.tasks.map((value1, index1) => (
-              <FieldArray key={value1.id.toString()} name={`tasks.${index1}`}>
+          <VStack maxHeight={"md"} overflowY={"auto"} alignItems={"stretch"}>
+            {formikProps.values.tasks.map((task, index) => (
+              <FieldArray key={`${task.id}`} name={`tasks.${index}`}>
                 {() => (
-                  <HStack>
-                    {Object.entries(formikProps.values.tasks[index1])
-                      .filter((value) =>
-                        ["name", "priority"].includes(value[0])
-                      )
-                      .reverse()
-                      .map((values) => (
-                        <FormControl
-                          key={value1.id.toString() + values[0]}
-                          width={values[0] === "priority" ? "5rem" : "max"}
-                          flex={values[0] === "priority" ? "unset" : "1"}
-                        >
-                          {values[0] === "priority" ? (
-                            <Field
-                              as={NumberInput}
-                              name={`tasks[${index1}].${values[0]}`}
+                  <HStack align={"start"}>
+                    {["priority", "name"].map((field) => (
+                      <FormControl
+                        isRequired={true}
+                        key={`${task.id}${field}`}
+                        width={field === "priority" ? "5rem" : "max"}
+                        flex={field === "priority" ? "unset" : "1"}
+                        isInvalid={
+                          formikProps.errors.tasks &&
+                          formikProps.errors.tasks[index] &&
+                          (formikProps.errors as any).tasks[index][field] &&
+                          formikProps.touched.tasks &&
+                          formikProps.touched.tasks[index] &&
+                          (formikProps.touched as any).tasks[index][field]
+                        }
+                      >
+                        {field === "priority" ? (
+                          <FastField
+                            as={NumberInput}
+                            name={`tasks.${index}.${field}`}
+                            min={1}
+                            type="number"
+                            validate={(v: number) => {
+                              if (v < 1)
+                                return "The priority number has to be more or qual to 1";
+                            }}
+                          >
+                            <NumberInputField
                               min={1}
-                            >
-                              <NumberInputField
-                                min={1}
-                                value={
-                                  formikProps.values.tasks[index1].priority
-                                }
-                                onChange={formikProps.handleChange}
-                                type="number"
+                              value={task.priority}
+                              // type={"number"}
+                              onChange={handleNumberInputFieldChange(index)}
+                            />
+                            <NumberInputStepper>
+                              <NumberIncrementStepper
+                                onClick={handleAddPriority(
+                                  formikProps,
+                                  index,
+                                  1
+                                )}
                               />
-                              <NumberInputStepper>
-                                <NumberIncrementStepper
-                                  onClick={handleAddPriority(
-                                    formikProps,
-                                    index1,
-                                    1
-                                  )}
-                                />
-                                <NumberDecrementStepper
-                                  onClick={handleAddPriority(
-                                    formikProps,
-                                    index1,
-                                    -1
-                                  )}
-                                />
-                              </NumberInputStepper>
-                            </Field>
-                          ) : (
-                            <Field
-                              as={Input}
-                              name={`tasks[${index1}].${values[0]}`}
-                              placeholder={"Task"}
-                            ></Field>
-                          )}
-                        </FormControl>
-                      ))}
+                              <NumberDecrementStepper
+                                onClick={handleAddPriority(
+                                  formikProps,
+                                  index,
+                                  -1
+                                )}
+                              />
+                            </NumberInputStepper>
+                          </FastField>
+                        ) : (
+                          <FastField
+                            as={Input}
+                            name={`tasks.${index}.${field}`}
+                            placeholder={"Task"}
+                            validate={validateTaskNameField}
+                          ></FastField>
+                        )}
+                        <FormErrorMessage>
+                          {formikProps.errors.tasks &&
+                            formikProps.errors.tasks[index] &&
+                            (formikProps.errors.tasks[index] as any)[field]}
+                        </FormErrorMessage>
+                      </FormControl>
+                    ))}
                   </HStack>
                 )}
               </FieldArray>
@@ -92,13 +134,15 @@ const AddGoalDynamicFields = ({
                 arrayHelpers.push({
                   id: new ObjectId(),
                   name: "",
-                  created_at: new Date(),
+                  // created_at: new Date(),
                   status: STATUS.Pending,
                   priority:
-                    formikProps.values.tasks[
-                      formikProps.values.tasks.length - 1
-                    ].priority + 1,
-                } as Task)
+                    formikProps.values.tasks.length > 0
+                      ? formikProps.values.tasks[
+                          formikProps.values.tasks.length - 1
+                        ].priority + 1
+                      : 1,
+                })
               }
               flex={"1"}
             >
@@ -115,5 +159,4 @@ const AddGoalDynamicFields = ({
     </FieldArray>
   );
 };
-
 export { AddGoalDynamicFields };

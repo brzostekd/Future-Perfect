@@ -1,4 +1,4 @@
-import { transition } from "@chakra-ui/react";
+import { Box, transition } from "@chakra-ui/react";
 
 const ClockCircle = ({
   fraction = 1,
@@ -23,7 +23,10 @@ const ClockCircle = ({
     }
   };
   return (
+    // <Box marginX={{ base: "6" }}>
     <svg
+      height={"100%"}
+      width={"100%"}
       color="red"
       viewBox={`0 0 ${WH} ${WH}`}
       xmlns="http://www.w3.org/2000/svg"
@@ -57,6 +60,7 @@ const ClockCircle = ({
         }
       ></circle>
     </svg>
+    // </Box>
   );
 };
 

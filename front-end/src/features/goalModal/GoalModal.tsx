@@ -6,53 +6,30 @@ import {
   ModalCloseButton,
   ModalFooter,
   Button,
+  FlexProps,
 } from "@chakra-ui/react";
 import { useContext } from "react";
-import { ModalContext } from "../../contexts";
+import { on } from "stream";
+import { GoalsContext, ModalContext } from "../../contexts";
+import { Goal } from "../../types/Index";
 import { GoalForm } from "./GoalForm";
 
-// type Props = {
-//   header: string;
-//   initialValues: Goal;
-//   disclosure: ReturnType<typeof useDisclosure>;
-// };
-const GoalModal = () => {
-  let modalContext = useContext(ModalContext);
-  if (!modalContext)
-    throw Error(
-      "modalContext is undefined. Wrong usage of GoalModal comonent."
-    );
-  //   if (!("header" in modalContext.modal))
-  //     throw Error(
-  //       "GoalModalProps have to be present on modalContextType in order for the component to be displayed."
-  //     );
-  // modalContext = {
-  //   ...modalContext,
-  //   ...{
-  //     header: "sef",
-  //     initialValues: {
-  //       id: new ObjectId(),
-  //       name: "",
-  //       created_at: new Date(),
-  //       board_id: new ObjectId(),
-  //       color: "red",
-  //       is_current: false,
-  //       tasks: [
-  //         {
-  //           id: new ObjectId(),
-  //           name: "",
-  //           created_at: new Date(),
-  //           status: STATUS.Pending,
-  //           priority: 1,
-  //         },
-  //       ],
-  //     },
-  //     onSubmit: (values) => {
-  //       console.log(values);
-  //     },
-  //   },
-  // };
-  return "header" in modalContext.modal ? (
+// type Props = ;
+
+const GoalModal = ({
+  onEdit,
+  onCreate,
+}: {
+  onEdit: (values: Goal) => void;
+  onCreate: (values: Goal) => void;
+}) => {
+  const modalContext = useContext(ModalContext);
+  if (!modalContext) throw Error("modalContext is undefined.");
+
+  const goalsContext = useContext(GoalsContext);
+  if (!goalsContext) throw Error("GoalsContext is undefined.");
+  const [goals, dispatchGoals] = goalsContext;
+  return "type" in modalContext.modal ? (
     <Modal isOpen={modalContext.isOpen} onClose={modalContext.onClose}>
       <ModalOverlay />
       <ModalContent
@@ -70,19 +47,28 @@ const GoalModal = () => {
             backgroundColor: "blackAlpha.300",
           },
         }}
+        margin={{ base: "0", sm: "unset" }}
+        marginY={{ sm: "16" }}
       >
-        <ModalHeader>{modalContext.modal.header}</ModalHeader>
+        <ModalHeader>
+          {
+            { CREATE: "Create a new goal", EDIT: "Edit a goal" }[
+              modalContext.modal.type
+            ]
+          }
+        </ModalHeader>
         <ModalCloseButton />
         <GoalForm
           initialValues={modalContext.modal.initialValues}
-          onSubmit={modalContext.modal.onSubmit}
+          onSubmit={{ CREATE: onCreate, EDIT: onEdit }[modalContext.modal.type]}
         >
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={modalContext.onClose}>
               Cancel
             </Button>
             <Button colorScheme="teal" type="submit">
-              Create
+              {modalContext.modal.type[0] +
+                modalContext.modal.type.slice(1).toLowerCase()}
             </Button>
           </ModalFooter>
         </GoalForm>

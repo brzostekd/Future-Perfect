@@ -4,6 +4,8 @@ import {
   Input,
   ModalFooter,
   Button,
+  FormControl,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { ObjectId } from "bson";
 import { Formik, Form, Field } from "formik";
@@ -16,17 +18,34 @@ interface Props extends PropsWithChildren {
 }
 const GoalForm = (props: Props) => {
   return (
-    <Formik initialValues={props.initialValues} onSubmit={props.onSubmit}>
+    <Formik
+      initialValues={props.initialValues}
+      onSubmit={props.onSubmit}
+      validateOnChange={false}
+    >
       {(formikProps) => {
         return (
           <Form>
             <ModalBody>
               <VStack align={"stretch"}>
-                <Field
-                  as={Input}
-                  name={"goalName"}
-                  placeholder={"What's your goal?"}
-                />
+                <FormControl
+                  isInvalid={
+                    !!formikProps.errors.name && formikProps.touched.name
+                  }
+                >
+                  <Field
+                    as={Input}
+                    isRequired={true}
+                    name={"name"}
+                    id={"name"}
+                    placeholder={"What's your goal?"}
+                    validate={(v: string) => {
+                      if (v.length < 1)
+                        return "Please, provide a name of the goal";
+                    }}
+                  />
+                  <FormErrorMessage>{formikProps.errors.name}</FormErrorMessage>
+                </FormControl>
                 <AddGoalDynamicFields formikProps={formikProps} />
               </VStack>
             </ModalBody>

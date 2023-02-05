@@ -6,143 +6,128 @@ import {
   Icon,
   IconButton,
   Text,
+  Tooltip,
   VStack,
 } from "@chakra-ui/react";
 import { ClockCircle } from "./ClockCircle";
-import { MdPause, MdPlayArrow, MdSkipNext } from "react-icons/md";
-import { ObjectId } from "bson";
+import { MdPause, MdPlayArrow, MdRestartAlt, MdSkipNext } from "react-icons/md";
 import moment from "moment";
-import { Timer } from "../../types/Index";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import {
+  GoalsContext,
+  SelectedGoalIndexContext,
+  TimerContext,
+  useTimerReducer,
+} from "../../contexts";
 
-const Clock = () => {
-  // { fraction }: { fraction: number }
-  type Action = { type: "start" | "next" | "pause" | "continue" | "reset" };
-  const [timer, timerDispatch] = useReducer(
-    (state: Timer, action: Action) => {
-      const now = new Date();
-      switch (action.type) {
-        case "next":
-          const pattern_step = (state.pattern_step + 1) % state.pattern.length;
-          const started_at = new Date();
-          return {
-            ...state,
-            pattern_step,
-            started_at,
-            paused_at: null,
-            ends_at: moment(started_at)
-              .add(state.pattern[pattern_step], "minutes")
-              .toDate(),
-          };
-        case "pause":
-          if (state.started_at) {
-            return { ...state, paused_at: new Date() };
-          } else return { ...state };
+const Clock = ({
+  timerReducer,
+  isDisabled = false,
+}: {
+  timerReducer: ReturnType<typeof useTimerReducer>;
+  isDisabled?: boolean;
+}) => {
+  const goalsContext = useContext(GoalsContext);
+  if (!goalsContext) throw Error("goalsContext is undefined.");
+  const [goals, dispatchGoals] = goalsContext;
 
-        case "continue":
-          return {
-            ...state,
-
-            started_at: moment(now)
-              .subtract(
-                moment(state.paused_at).diff(moment(state.started_at), "ms"),
-                "ms"
-              )
-              .toDate(),
-            paused_at: null,
-            ends_at: moment(now)
-              .add(
-                moment(state.ends_at).diff(moment(state.paused_at), "ms"),
-                "ms"
-              )
-              .toDate(),
-          };
-        case "start":
-          return {
-            ...state,
-            started_at: new Date(),
-            ends_at: moment().add(state.pattern[0], "minutes").toDate(),
-          };
-        case "reset":
-          return {
-            ...state,
-            started_at: null,
-            paused_at: null,
-            ends_at: null,
-          };
-        default:
-          return { ...state };
-      }
-    },
-    {
-      task_id: new ObjectId(),
-      goal_id: new ObjectId(),
-      started_at: null,
-      paused_at: null,
-      ends_at: null,
-      pattern_step: 0,
-      pattern: [1, 0.5],
-    }
-  );
+  const timerContext = useContext(TimerContext);
+  if (!timerContext) throw Error("timerContext is undefined.");
+  const [timer, timerDispatch] = timerContext;
 
   const [fraction, setFraction] = useState(1);
-  const [timeDisplay, setTimeDisplay] = useState([12, 0]);
+  const [timeDisplay, setTimeDisplay] = useState([0, 0]);
 
+  const selectedGoalIndexContext = useContext(SelectedGoalIndexContext);
+  if (!selectedGoalIndexContext)
+    throw Error("selectedGoalIndexContext is undefined.");
+  const [selectedGoalIndex, setSelectedGoalIndex] = selectedGoalIndexContext;
   useEffect(() => {
-    if (timer.started_at && !timer.paused_at) {
-      const loop = () => {
-        const durationValue =
-          timer.ends_at.valueOf() - timer.started_at.valueOf();
-        const fraction =
-          (timer.ends_at.valueOf() -
-            (timer.paused_at ?? Date.now()).valueOf()) /
-          durationValue;
+    if (!timer.paused_at) {
+      if (timer.started_at) {
+        const loop = () => {
+          const durationValue =
+            timer.ends_at.valueOf() - timer.started_at.valueOf();
+          const fraction =
+            (timer.ends_at.valueOf() -
+              (timer.paused_at ?? Date.now()).valueOf()) /
+            durationValue;
 
-        setFraction(() => {
-          return fraction;
-        });
+          if (fraction < 0) {
+            setFraction(() => {
+              return 0;
+            });
 
-        if (fraction < 0)
-          setTimeout(() => timerDispatch({ type: "next" }), 1000);
-      };
+            setTimeout(() => timerDispatch({ type: "next" }), 1000);
+            clearInterval(intervalId);
+          } else
+            setFraction(() => {
+              return fraction;
+            });
+          // timerDispatch({ type: "next" });
+        };
 
-      loop();
-      const intervalId = setInterval(loop, 1000);
-      return () => clearInterval(intervalId);
+        loop();
+        const intervalId = setInterval(loop, 1000);
+        return () => clearInterval(intervalId);
+      } else setFraction(1);
     }
   }, [timer]);
+
   useEffect(() => {
-    if (timer.started_at) {
-      const now = moment(timer.paused_at ?? new Date());
-      const ends_at = moment(timer.ends_at);
-      const m = ends_at.diff(now, "minute");
-      const s = ends_at.diff(now, "second");
-      setTimeDisplay([m, s]);
-    }
+    const now = moment(timer.paused_at ?? new Date());
+    const ends_at = moment(timer.ends_at);
+    if (timer.started_at || now < ends_at) {
+      const seconds = ends_at.diff(now, "seconds");
+      const m = Math.floor(seconds / 60);
+
+      setTimeDisplay([m, seconds - m * 60]);
+    } else setTimeDisplay([0, 0]);
   }, [fraction]);
+
+  // useEffect(() => {
+  //   timerDispatch({ type: "reset" });
+  // }, [selectedGoalIndex]);
+
+  const phase = timer.pattern_step % 2 === 0;
   return (
     <Flex
       alignItems={"center"}
       justifyContent={"center"}
-      marginX={"6"}
-      position={"relative"}
+      minWidth={0}
+      minHeight={0}
+      flex={3}
+      flexBasis={1}
+      // position={"relative"}
+      userSelect={"none"}
+      // width={"full"}
+      // height={"full"}
     >
       <ClockCircle fraction={fraction}></ClockCircle>
-      <VStack position={"absolute"}>
-        <Heading fontSize={"7xl"} marginTop={"4"}>
+      <VStack position={"absolute"} spacing={{ base: "1", sm: "2" }}>
+        <Heading
+          fontSize={{ base: "7xl", sm: "8xl" }}
+          // marginTop={{ md: "4" }}
+        >
           {timeDisplay.map((v) => v.toString().padStart(2, "0")).join(":")}
         </Heading>
         <Box
           padding={"3"}
-          backgroundColor={"blackAlpha.100"}
+          backgroundColor={phase ? "blackAlpha.100" : "gray.800"}
+          color={phase ? "initial" : "white"}
           borderRadius={"2xl"}
         >
-          <Text as={"b"}>
-            {timer.pattern_step % 2 === 0 ? "WORK" : "BREAK"}
-          </Text>
+          <Text as={"b"}>{phase ? "WORK" : "BREAK"}</Text>
         </Box>
         <HStack>
           {[
+            {
+              as: MdSkipNext,
+              onClick: () => {
+                timerDispatch({ type: "next" });
+              },
+              ariaLabel: "Next",
+            },
             {
               as: MdPlayArrow,
               onClick: () => {
@@ -165,32 +150,34 @@ const Clock = () => {
               ariaLabel: "Start",
             },
             {
-              as: MdSkipNext,
+              as: MdRestartAlt,
               onClick: () => {
-                timerDispatch({ type: "next" });
+                timerDispatch({ type: "reset" });
               },
-              ariaLabel: "Next",
+              ariaLabel: "Reset",
             },
           ]
             .filter((element) => {
               if (timer.started_at) {
-                if (timer.paused_at) {
-                  return ["Play", "Next"].includes(element.ariaLabel);
-                } else {
-                  return ["Pause", "Next"].includes(element.ariaLabel);
-                }
-              } else return element.ariaLabel === "Start";
+                return [
+                  timer.paused_at ? "Play" : "Pause",
+                  "Next",
+                  "Reset",
+                ].includes(element.ariaLabel);
+              } else return ["Start"].includes(element.ariaLabel);
             })
             .map((element) => (
-              <IconButton
-                key={element.ariaLabel}
-                backgroundColor={"blackAlpha.100"}
-                size={"lg"}
-                icon={<Icon boxSize={"6"} as={element.as}></Icon>}
-                aria-label={element.ariaLabel}
-                isRound={true}
-                onClick={element.onClick}
-              />
+              <Tooltip label={element.ariaLabel} key={element.ariaLabel}>
+                <IconButton
+                  isDisabled={isDisabled}
+                  backgroundColor={"blackAlpha.100"}
+                  size={"lg"}
+                  icon={<Icon boxSize={"6"} as={element.as}></Icon>}
+                  aria-label={element.ariaLabel}
+                  isRound={true}
+                  onClick={element.onClick}
+                />
+              </Tooltip>
             ))}
         </HStack>
       </VStack>

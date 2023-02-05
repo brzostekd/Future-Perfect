@@ -1,182 +1,200 @@
 import { Flex, VStack, Text, HStack, Button } from "@chakra-ui/react";
 import { ObjectId } from "bson";
 import { useContext } from "react";
-import { ModalContext } from "../../contexts";
-import { STATUS } from "../../types/Index";
-type COLORS =
-  | "red"
-  | "orange"
-  | "yellow"
-  | "green"
-  | "teal"
-  | "blue"
-  | "purple"
-  | "cyan"
-  | "pink";
-const GoalItem = ({
-  selected = false,
-  color = "teal",
-}: {
-  selected?: boolean;
-  color?: COLORS;
-}) => {
-  const BUTTON_SPACE_OFFSET = 10;
+import {
+  GoalsContext,
+  ModalContext,
+  SelectedGoalIndexContext,
+  TimerContext,
+} from "../../contexts";
+import { COLORS, Goal, STATUS } from "../../types/Index";
+const GoalItem = ({ goal, goalIndex }: { goal: Goal; goalIndex: number }) => {
+  const goalsContext = useContext(GoalsContext);
+  if (!goalsContext) throw Error("goalsContext is undefined..");
+  const [goals, dispatchGoals] = goalsContext;
+
+  const BUTTON_SPACE_OFFSET = 2;
+
   let modalContext = useContext(ModalContext);
-  if (!modalContext)
-    throw Error(
-      "modalContext is undefined. Wrong usage of GoalModal comonent."
-    );
+  if (!modalContext) throw Error("modalContext is undefined.");
+
+  const selectedGoalIndexContext = useContext(SelectedGoalIndexContext);
+  if (!selectedGoalIndexContext)
+    throw Error("selectedGoalIndexContext is undefined.");
+  const [selectedGoalIndex, setSelectedGoalIndex] = selectedGoalIndexContext;
+
+  const timerContext = useContext(TimerContext);
+  if (!timerContext) throw Error("timerContext is undefined.");
+  const [timer, timerDispatch] = timerContext;
 
   return (
     <Flex
       flexDirection={"row"}
+      bgColor={`${goal.color}.200`}
+      borderRadius={"1.2rem"}
       sx={{
         "&:hover, &:focus-within,": {
           ".animate-visibility": {
             maxWidth: "10rem",
+            marginRight: `-${BUTTON_SPACE_OFFSET}rem`,
           },
-          ".item": {
-            marginLeft: -BUTTON_SPACE_OFFSET,
-            // transition: "margin 0.5s linear",
-          },
+          // ".item": {
+          //   // marginLeft: `${-BUTTON_SPACE_OFFSET}rem`,
+          //   // transition: "margin 0.5s linear",
+          // },
         },
+        "&:focus-within,": {
+          ".animate-visibility": {
+            overflow: "visible",
+          },
+          // borderTopLeftRadius: "0rem",
+          // borderBottomLeftRadius: "0rem",
+        },
+
         ".animate-visibility ": {
           // display: "none",
           maxWidth: "0px",
           overflow: "hidden",
-          transition: "max-width 0.2s ease-in-out",
+          marginRight: "0rem",
+          transition: "max-width 0.3s ease, margin-right 0.3s ease",
           // marginRight: "-full",
         },
         ".item": {
           marginLeft: "0",
-          transition: "margin 0.2s ease",
+          transition:
+            "margin 0.2s ease-out,border-top-left-radius 0.15s ease,border-bottom-left-radius 0.15s ease",
         },
       }}
     >
-      <VStack
-        spacing={"0"}
+      <Flex
+        direction={"column"}
         align={"start"}
+        alignContent={"center"}
         alignItems={"stretch"}
         className="animate-visibility"
-        // zIndex={"0"}
+        borderLeftRadius={"1.2rem"}
+        marginRight={"0rem"}
       >
         <Button
           flex={1}
           size={"md"}
           variant={"solid"}
-          colorScheme={color}
+          colorScheme={goal.color}
           borderRadius={"0"}
-          bgColor={`${color}.200`}
-          color={`${color}.900`}
-          _hover={{ "&": { bgColor: `${color}.300` } }}
+          bgColor={`${goal.color}.200`}
+          color={`${goal.color}.900`}
+          _hover={{ "&": { bgColor: `${goal.color}.300` } }}
           borderTopLeftRadius={"1.2rem"}
+          fontWeight={"bold"}
           onClick={() => {
-            if (!modalContext)
-              throw Error(
-                "modalContext is undefined. Wrong usage of GoalList comonent."
-              );
+            if (!modalContext) throw Error("modalContext is undefined.");
             modalContext.dispatchModal({
               type: "setEdit",
-              data: {
-                id: new ObjectId(),
-                name: "Jump over a gap",
-                created_at: new Date(),
-                board_id: new ObjectId(),
-                //   TODO: make clor random
-                color: "blue",
-                is_current: false,
-                tasks: [
-                  {
-                    id: new ObjectId(),
-                    name: "run for a while",
-                    created_at: new Date(),
-                    status: STATUS.Pending,
-                    priority: 1,
-                  },
-                  {
-                    id: new ObjectId(),
-                    name: "jump in the air",
-                    created_at: new Date(),
-                    status: STATUS.Pending,
-                    priority: 2,
-                  },
-                  {
-                    id: new ObjectId(),
-                    name: "now over the gap",
-                    created_at: new Date(),
-                    status: STATUS.Pending,
-                    priority: 3,
-                  },
-                  {
-                    id: new ObjectId(),
-                    name: "land on my feet",
-                    created_at: new Date(),
-                    status: STATUS.Pending,
-                    priority: 4,
-                  },
-                ],
-              },
+              data: goal,
             });
             modalContext.onOpen();
           }}
         >
-          <Text marginRight={BUTTON_SPACE_OFFSET}>Edit</Text>
+          <Text marginRight={`${BUTTON_SPACE_OFFSET}rem`}>Edit</Text>
         </Button>
         <Button
           flex={1}
           size={"md"}
           variant={"solid"}
-          colorScheme={color}
+          colorScheme={goal.color}
           borderRadius={"0"}
-          bgColor={`${color}.200`}
-          color={`${color}.900`}
-          _hover={{ "&": { bgColor: `${color}.300` } }}
+          bgColor={`${goal.color}.200`}
+          color={`${goal.color}.900`}
+          _hover={{ "&": { bgColor: `${goal.color}.300` } }}
           borderBottomLeftRadius={"1.2rem"}
+          overflow={"clip"}
+          fontWeight={"bold"}
+          onClick={() => {
+            if (selectedGoalIndex === goalIndex) {
+              setSelectedGoalIndex(undefined);
+              timerDispatch({ type: "reset" });
+            } else if (
+              selectedGoalIndex !== undefined &&
+              selectedGoalIndex > goalIndex
+            )
+              setSelectedGoalIndex(selectedGoalIndex - 1);
+            dispatchGoals({
+              type: "remove",
+              data: { id: goal.id },
+            });
+          }}
         >
-          <Text marginRight={BUTTON_SPACE_OFFSET}>Delete</Text>
+          <Text marginRight={`${BUTTON_SPACE_OFFSET}rem`}>Delete</Text>
         </Button>
-      </VStack>
-      <Flex
-        as={"button"}
+      </Flex>
+      <Button
         position={"relative"}
         className={"item"}
-        marginLeft={-BUTTON_SPACE_OFFSET}
+        display={"flex"}
         flex={1}
         flexDirection={"row"}
         justifyContent={"space-between"}
-        align={"stretch"}
-        bgColor={`${color}.200`}
+        height={"auto"}
+        margin={"0"}
+        padding={"0"}
+        variant={"ghost"}
+        zIndex={1}
+        bgColor={`${goal.color}.200`}
         borderRadius={"1.2rem"}
-        border={selected ? "4px" : 0}
-        borderColor={selected ? `${color}.200` : "unset"}
+        colorScheme={goal.color.toString()}
+        border={goal.is_current ? "4px" : 0}
+        borderColor={goal.is_current ? `${goal.color}.200` : "unset"}
+        _hover={{ backgroundColor: "none" }}
         onClick={(e) => {
-          e.preventDefault();
-          // if (!("tagName" in target)) return;
-          // if (target.tagName !== "BUTTON") console.log(target);
+          e.currentTarget.blur();
+          const _goal = goals.find((_goal) => _goal.id === goal.id);
+          if (_goal && _goal.is_current) return;
+          dispatchGoals({
+            type: "setCurrent",
+            data: { id: goal.id },
+          });
+          setSelectedGoalIndex(goalIndex);
+
+          timerDispatch({ type: "reset" });
         }}
       >
-        <HStack
+        <VStack
           flex={"1"}
           bgColor={`whiteAlpha.800`}
-          borderRadius={selected ? "2xl" : "1.2rem"}
+          borderRadius={goal.is_current ? "2xl" : "1.2rem"}
           align={"stretch"}
+          spacing={"1"}
+          padding={"3"}
+          textAlign={"start"}
+          overflow={"hidden"}
         >
-          <VStack spacing={"1"} align={"start"} padding={"3"}>
-            <Text fontWeight={"bold"} color={`${color}.900`}>
-              My goal name
-            </Text>
-            <Text as={"b"} color={`${color}.400`} fontSize={"sm"}>
-              13 tasks
-            </Text>
-          </VStack>
-        </HStack>
+          <Text
+            fontWeight={"bold"}
+            color={`${goal.color}.900`}
+            overflow={"hidden"}
+            textOverflow={"ellipsis"}
+          >
+            {goal.name}
+          </Text>
+          <Text as={"b"} color={`${goal.color}.400`} fontSize={"sm"}>
+            {`${goal.tasks.length} task${goal.tasks.length > 1 ? "s" : ""}`}
+          </Text>
+        </VStack>
         <HStack borderEndRadius={"2xl"} width={"24"} justifyContent={"center"}>
           {/* Place for edit, delete etc. buttons, visible @ hover */}
-          <Text fontWeight={"bold"} fontSize={19} color={`${color}.900`}>{`${
-            Math.round((7 / 13) * 10000) / 100
-          }%`}</Text>
+          <Text fontWeight={"bold"} fontSize={19} color={`${goal.color}.900`}>
+            {`${(
+              (goal.tasks.filter((el) => el.status === STATUS.Done).length /
+                goal.tasks.length) *
+              100
+            ).toLocaleString("pl-PL", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              minimumIntegerDigits: 1,
+            })}%`}
+          </Text>
         </HStack>
-      </Flex>
+      </Button>
     </Flex>
   );
 };

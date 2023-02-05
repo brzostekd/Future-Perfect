@@ -42,6 +42,10 @@ const PasscodeForm = (props: StackProps) => {
                     value !== "qq" ? "This error is bad" : undefined
                   }
                 />
+                <FormHelperText>
+                  Anyone who knows the passcode
+                  <br /> will be able to access your board
+                </FormHelperText>
                 <FormErrorMessage>{errors.passcode}</FormErrorMessage>
               </FormControl>
               <Button colorScheme={"teal"} type="submit">

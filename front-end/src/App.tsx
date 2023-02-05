@@ -1,15 +1,15 @@
-import { Center, Container, Flex, VStack } from "@chakra-ui/layout";
-import { Text, Box, Card, CardBody } from "@chakra-ui/react";
-import { VDivider } from "./components/Vdivider";
+import { Flex } from "@chakra-ui/layout";
+import { PasscodeContext, usePasscodeState } from "./contexts";
 import { Main } from "./features/main/Main";
 import { Passcode } from "./features/passcode/Passcode";
 
 function App() {
+  const [passcode, setPascode] = usePasscodeState();
   return (
     <Flex
       justify={"center"}
-      alignItems={"center"}
-      height={{ md: "100vh" }}
+      alignItems={{ md: "center" }}
+      height={"100vh"}
       backgroundColor={"teal.50"}
       sx={{
         "*::-webkit-scrollbar": { width: "3", paddingRight: "2px" },
@@ -22,15 +22,17 @@ function App() {
         },
       }}
     >
-      <Flex
-        borderRadius={[null, "32"]}
-        boxShadow={{ md: "2xl" }}
-        width={["auto", "4xl"]}
-        height={["auto", "xl"]}
-        backgroundColor={"white"}
-      >
-        {true ? <Main /> : <Passcode />}
-      </Flex>
+      <PasscodeContext.Provider value={[passcode, setPascode]}>
+        <Flex
+          borderRadius={{ md: 32 }}
+          boxShadow={{ md: "2xl" }}
+          width={{ base: "full", md: "4xl" }}
+          height={{ base: "full", md: "xl" }}
+          backgroundColor={"white"}
+        >
+          {passcode !== undefined ? <Main /> : <Passcode />}
+        </Flex>
+      </PasscodeContext.Provider>
     </Flex>
   );
 }
