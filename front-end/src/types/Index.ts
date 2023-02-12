@@ -2,11 +2,9 @@ import { ObjectId } from "bson";
 type GoalModalProps = {
   type: "CREATE" | "EDIT";
   initialValues: Goal;
-  // onSubmit: (values: Goal) => void;
 };
 enum STATUS {
   Pending,
-  Current,
   Done,
 }
 
@@ -21,17 +19,13 @@ type Goal = {
   name: string;
   created_at: Date;
   board_id: ObjectId;
-  // tasks_count: number;
-  // tasks_done_count: number;
   color: COLORS;
   tasks: Task[];
   is_current: boolean;
 };
 type Task = {
   id: ObjectId;
-  // goal_id: ObjectId;
   name: string;
-  // created_at: Date;
   status: STATUS;
   priority: number;
 };
@@ -46,8 +40,6 @@ type Timer = (
       ends_at: null;
     }
 ) & {
-  // task_id: ObjectId;
-  // goal_index: number | null;
   paused_at: Date | null;
   pattern_step: number;
   pattern: number[];

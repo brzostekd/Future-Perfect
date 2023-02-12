@@ -13,24 +13,9 @@ import { ClockCircle } from "./ClockCircle";
 import { MdPause, MdPlayArrow, MdRestartAlt, MdSkipNext } from "react-icons/md";
 import moment from "moment";
 import { useEffect, useState, useContext } from "react";
-import {
-  GoalsContext,
-  SelectedGoalIndexContext,
-  TimerContext,
-  useTimerReducer,
-} from "../../contexts";
+import { TimerContext } from "../../contexts";
 
-const Clock = ({
-  timerReducer,
-  isDisabled = false,
-}: {
-  timerReducer: ReturnType<typeof useTimerReducer>;
-  isDisabled?: boolean;
-}) => {
-  const goalsContext = useContext(GoalsContext);
-  if (!goalsContext) throw Error("goalsContext is undefined.");
-  const [goals, dispatchGoals] = goalsContext;
-
+const Clock = ({ isDisabled = false }: { isDisabled?: boolean }) => {
   const timerContext = useContext(TimerContext);
   if (!timerContext) throw Error("timerContext is undefined.");
   const [timer, timerDispatch] = timerContext;
@@ -38,10 +23,6 @@ const Clock = ({
   const [fraction, setFraction] = useState(1);
   const [timeDisplay, setTimeDisplay] = useState([0, 0]);
 
-  const selectedGoalIndexContext = useContext(SelectedGoalIndexContext);
-  if (!selectedGoalIndexContext)
-    throw Error("selectedGoalIndexContext is undefined.");
-  const [selectedGoalIndex, setSelectedGoalIndex] = selectedGoalIndexContext;
   useEffect(() => {
     if (!timer.paused_at) {
       if (timer.started_at) {
@@ -64,7 +45,6 @@ const Clock = ({
             setFraction(() => {
               return fraction;
             });
-          // timerDispatch({ type: "next" });
         };
 
         loop();
@@ -72,6 +52,7 @@ const Clock = ({
         return () => clearInterval(intervalId);
       } else setFraction(1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timer]);
 
   useEffect(() => {
@@ -83,11 +64,8 @@ const Clock = ({
 
       setTimeDisplay([m, seconds - m * 60]);
     } else setTimeDisplay([0, 0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fraction]);
-
-  // useEffect(() => {
-  //   timerDispatch({ type: "reset" });
-  // }, [selectedGoalIndex]);
 
   const phase = timer.pattern_step % 2 === 0;
   return (
@@ -97,17 +75,12 @@ const Clock = ({
       minWidth={0}
       minHeight={0}
       flex={3}
-      flexBasis={1}
-      // position={"relative"}
       userSelect={"none"}
-      // width={"full"}
-      // height={"full"}
     >
       <ClockCircle fraction={fraction}></ClockCircle>
       <VStack position={"absolute"} spacing={{ base: "1", sm: "2" }}>
         <Heading
           fontSize={{ base: "7xl", sm: "8xl" }}
-          // marginTop={{ md: "4" }}
         >
           {timeDisplay.map((v) => v.toString().padStart(2, "0")).join(":")}
         </Heading>

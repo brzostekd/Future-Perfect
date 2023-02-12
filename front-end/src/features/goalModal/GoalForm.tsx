@@ -2,15 +2,12 @@ import {
   ModalBody,
   VStack,
   Input,
-  ModalFooter,
-  Button,
   FormControl,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { ObjectId } from "bson";
 import { Formik, Form, Field } from "formik";
-import React, { PropsWithChildren } from "react";
-import { STATUS, Goal } from "../../types/Index";
+import { PropsWithChildren } from "react";
+import { Goal } from "../../types/Index";
 import { AddGoalDynamicFields } from "./AddGoalDynamicFields";
 interface Props extends PropsWithChildren {
   initialValues: Goal;

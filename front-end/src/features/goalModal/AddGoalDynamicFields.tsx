@@ -12,18 +12,10 @@ import {
   NumberInputStepper,
 } from "@chakra-ui/react";
 import { ObjectId } from "bson";
-import {
-  FieldArray,
-  Field,
-  FormikProps,
-  FieldArrayRenderProps,
-  FormikErrors,
-  FastField,
-} from "formik";
-import React from "react";
-import { memo, useEffect, useMemo, useState } from "react";
-import { Goal, STATUS, Task } from "../../types/Index";
-import { castPriorityToNumber, handleAddPriority } from "../../utils";
+import { FieldArray, FormikProps, FastField } from "formik";
+import { useEffect, useState } from "react";
+import { Goal, STATUS } from "../../types/Index";
+import { castPriorityToNumber, handlePriorityAddition } from "../../utils";
 
 const validateTaskNameField = (v: string) => {
   if (!v) return "Please, provide a name of the task";
@@ -88,19 +80,18 @@ const AddGoalDynamicFields = ({
                             <NumberInputField
                               min={1}
                               value={task.priority}
-                              // type={"number"}
                               onChange={handleNumberInputFieldChange(index)}
                             />
                             <NumberInputStepper>
                               <NumberIncrementStepper
-                                onClick={handleAddPriority(
+                                onClick={handlePriorityAddition(
                                   formikProps,
                                   index,
                                   1
                                 )}
                               />
                               <NumberDecrementStepper
-                                onClick={handleAddPriority(
+                                onClick={handlePriorityAddition(
                                   formikProps,
                                   index,
                                   -1

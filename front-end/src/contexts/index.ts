@@ -30,7 +30,6 @@ const useModalReducer = () => {
               {
                 id: new ObjectId(),
                 name: "",
-                // created_at: new Date(),
                 status: STATUS.Pending,
                 priority: 1,
               },
@@ -88,7 +87,6 @@ const useGoalsReducer = () => {
     switch (action.type) {
       case "add":
         return newState.concat(action.data);
-      // return setCurrent(newState.length - 1, newState);
       case "remove":
         goalIndex = findIndex(state, action.data.id);
         if (goalIndex !== undefined) {
@@ -129,7 +127,6 @@ const GoalsContext = createContext<
 
 const useTimerReducer = () => {
   type Action = { type: "start" | "next" | "pause" | "continue" | "reset" };
-  // | { type: "setGoalId"; data: { goalIndex: number | null } };
   const reducer = (state: Timer, action: Action) => {
     const reset = { started_at: null, paused_at: null, ends_at: null };
     const now = new Date();
@@ -139,7 +136,6 @@ const useTimerReducer = () => {
         const started_at = new Date();
         return {
           ...state,
-          // ...reset,
           pattern_step,
           started_at,
           paused_at: null,
@@ -183,19 +179,11 @@ const useTimerReducer = () => {
           ...state,
           ...reset,
         };
-      // case "setGoalId":
-      //   return {
-      //     ...state,
-      //     goal_index: action.data.goalIndex,
-      //     ...reset,
-      //   };
       default:
         return { ...state };
     }
   };
   return useReducer(reducer, {
-    // task_id: new ObjectId(),
-    // goal_index: null,
     started_at: null,
     paused_at: null,
     ends_at: null,

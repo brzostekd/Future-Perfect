@@ -1,10 +1,7 @@
 import { Flex } from "@chakra-ui/layout";
-import { PasscodeContext, usePasscodeState } from "./contexts";
 import { Main } from "./features/main/Main";
-import { Passcode } from "./features/passcode/Passcode";
 
 function App() {
-  const [passcode, setPascode] = usePasscodeState();
   return (
     <Flex
       justify={"center"}
@@ -22,17 +19,15 @@ function App() {
         },
       }}
     >
-      <PasscodeContext.Provider value={[passcode, setPascode]}>
-        <Flex
-          borderRadius={{ md: 32 }}
-          boxShadow={{ md: "2xl" }}
-          width={{ base: "full", md: "4xl" }}
-          height={{ base: "full", md: "xl" }}
-          backgroundColor={"white"}
-        >
-          {passcode !== undefined ? <Main /> : <Passcode />}
-        </Flex>
-      </PasscodeContext.Provider>
+      <Flex
+        borderRadius={{ md: 32 }}
+        boxShadow={{ md: "2xl" }}
+        width={{ base: "full", md: "4xl" }}
+        height={{ base: "full", md: "xl" }}
+        backgroundColor={"white"}
+      >
+        <Main />
+      </Flex>
     </Flex>
   );
 }

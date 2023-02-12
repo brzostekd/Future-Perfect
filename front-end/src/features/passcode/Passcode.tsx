@@ -1,20 +1,12 @@
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-  Heading,
-  Input,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import { Formik, Field, Form } from "formik";
+import { Flex, Heading, Text, VStack } from "@chakra-ui/react";
 import { useContext } from "react";
 import { PasscodeContext } from "../../contexts";
 import { PasscodeForm } from "./PasscodeForm";
+
+// IMPORTANT:
+// This component is part of a feature that is not going to be implemented.
+// I'm keeping this code for potential use in the future, in case of
+// change in direction and further development.
 
 const Passcode = () => {
   const passcodeContext = useContext(PasscodeContext);
@@ -64,14 +56,10 @@ const Passcode = () => {
         justify={"center"}
         alignItems={"center"}
       >
-        <PasscodeForm
-          // bottom="0"
-          shadow={"xl"}
-          // marginBottom={{ md: 20 }}
-        />
+        <PasscodeForm shadow={"xl"} />
       </Flex>
     </Flex>
   );
 };
 
-export { Passcode };
+export {};

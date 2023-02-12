@@ -1,5 +1,4 @@
 import { Flex, VStack, Text, HStack, Button } from "@chakra-ui/react";
-import { ObjectId } from "bson";
 import { useContext } from "react";
 import {
   GoalsContext,
@@ -7,7 +6,7 @@ import {
   SelectedGoalIndexContext,
   TimerContext,
 } from "../../contexts";
-import { COLORS, Goal, STATUS } from "../../types/Index";
+import { Goal, STATUS } from "../../types/Index";
 const GoalItem = ({ goal, goalIndex }: { goal: Goal; goalIndex: number }) => {
   const goalsContext = useContext(GoalsContext);
   if (!goalsContext) throw Error("goalsContext is undefined..");
@@ -25,7 +24,7 @@ const GoalItem = ({ goal, goalIndex }: { goal: Goal; goalIndex: number }) => {
 
   const timerContext = useContext(TimerContext);
   if (!timerContext) throw Error("timerContext is undefined.");
-  const [timer, timerDispatch] = timerContext;
+  const timerDispatch = timerContext[1];
 
   return (
     <Flex
@@ -38,26 +37,18 @@ const GoalItem = ({ goal, goalIndex }: { goal: Goal; goalIndex: number }) => {
             maxWidth: "10rem",
             marginRight: `-${BUTTON_SPACE_OFFSET}rem`,
           },
-          // ".item": {
-          //   // marginLeft: `${-BUTTON_SPACE_OFFSET}rem`,
-          //   // transition: "margin 0.5s linear",
-          // },
         },
         "&:focus-within,": {
           ".animate-visibility": {
             overflow: "visible",
           },
-          // borderTopLeftRadius: "0rem",
-          // borderBottomLeftRadius: "0rem",
         },
 
         ".animate-visibility ": {
-          // display: "none",
           maxWidth: "0px",
           overflow: "hidden",
           marginRight: "0rem",
           transition: "max-width 0.3s ease, margin-right 0.3s ease",
-          // marginRight: "-full",
         },
         ".item": {
           marginLeft: "0",

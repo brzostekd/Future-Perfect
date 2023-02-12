@@ -6,15 +6,11 @@ import {
   ModalCloseButton,
   ModalFooter,
   Button,
-  FlexProps,
 } from "@chakra-ui/react";
 import { useContext } from "react";
-import { on } from "stream";
-import { GoalsContext, ModalContext } from "../../contexts";
+import { ModalContext } from "../../contexts";
 import { Goal } from "../../types/Index";
 import { GoalForm } from "./GoalForm";
-
-// type Props = ;
 
 const GoalModal = ({
   onEdit,
@@ -26,9 +22,6 @@ const GoalModal = ({
   const modalContext = useContext(ModalContext);
   if (!modalContext) throw Error("modalContext is undefined.");
 
-  const goalsContext = useContext(GoalsContext);
-  if (!goalsContext) throw Error("GoalsContext is undefined.");
-  const [goals, dispatchGoals] = goalsContext;
   return "type" in modalContext.modal ? (
     <Modal isOpen={modalContext.isOpen} onClose={modalContext.onClose}>
       <ModalOverlay />

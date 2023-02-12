@@ -3,11 +3,10 @@ import { AddIcon } from "@chakra-ui/icons";
 import { GoalItem } from "./GoalItem";
 import { useContext } from "react";
 import { GoalsContext, ModalContext } from "../../contexts";
-// const GoalList = ({ goals, ...props }: { goals: Goal[] } & FlexProps) => {
 const GoalList = (props: FlexProps) => {
   const goalsContext = useContext(GoalsContext);
   if (!goalsContext) throw Error("GoalsContext is undefined.");
-  const [goals, dispatchGoals] = goalsContext;
+  const goals = goalsContext[0];
 
   let modalContext = useContext(ModalContext);
   if (!modalContext) throw Error("modalContext is undefined.");

@@ -123,8 +123,6 @@
             ]
         }
 
-
-
 <Formik> is a component that helps you with building forms. It uses a render props pattern made popular by libraries like React Motion and React Router.
 
 provides state itc.
@@ -136,5 +134,12 @@ Dom element makes submit work
 
 <Field /> will automagically hook up inputs to Formik. It uses the name attribute to match up with Formik state. <Field /> will default to an HTML <input /> element.
 
-
 <FieldArray /> is a component that helps with common array/list manipulations. You pass it a name property with the path to the key within values that holds the relevant array. <FieldArray /> will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage touched for you.
+
+**Database schema**
+
+Tables
+
+- Board
+- Goal
+- task

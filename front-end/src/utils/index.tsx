@@ -1,7 +1,7 @@
 import { FormikProps } from "formik";
 import { Goal } from "../types/Index";
 
-const handleAddPriority = (
+const handlePriorityAddition = (
   formikProps: FormikProps<Goal>,
   index: number,
   value: number
@@ -37,4 +37,4 @@ const castPriorityToNumber = (
     return state;
   });
 };
-export { handleAddPriority, castPriorityToNumber };
+export { handlePriorityAddition, castPriorityToNumber };

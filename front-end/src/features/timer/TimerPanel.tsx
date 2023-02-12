@@ -5,25 +5,23 @@ import {
   Button,
   Select,
   Heading,
-  Center,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import {
   GoalsContext,
   SelectedGoalIndexContext,
   TimerContext,
-  useTimerReducer,
 } from "../../contexts";
 import { STATUS, Task } from "../../types/Index";
 import { Clock } from "./Clock";
 
-const Timer = (props: StackProps) => {
+const TimerPanel = (props: StackProps) => {
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [isGoalAchieved, setIsGoalAchieved] = useState<boolean | null>(null);
 
   const timerContext = useContext(TimerContext);
   if (!timerContext) throw Error("timerContext is undefined.");
-  const [timer, timerDispatch] = timerContext;
+  const timerDispatch = timerContext[1];
 
   const goalsContext = useContext(GoalsContext);
   if (!goalsContext) throw Error("goalsContext is undefined.");
@@ -32,7 +30,7 @@ const Timer = (props: StackProps) => {
   const selectedGoalIndexContext = useContext(SelectedGoalIndexContext);
   if (!selectedGoalIndexContext)
     throw Error("selectedGoalIndexContext is undefined.");
-  const [selectedGoalIndex, setSelectedGoalIndex] = selectedGoalIndexContext;
+  const selectedGoalIndex = selectedGoalIndexContext[0];
 
   const [tasksForOptions, setTasksForOptions] = useState<Task[] | []>(
     selectedGoalIndex !== undefined
@@ -41,11 +39,6 @@ const Timer = (props: StackProps) => {
         )
       : []
   );
-  // const s =
-  //   selectedGoalIndex !== undefined &&
-  //   Array(...goals[selectedGoalIndex].tasks).every(
-  //     (task) => task.status === STATUS.Done
-  //   );
   const isDisabled =
     selectedGoalIndex === undefined || tasksForOptions.length === 0;
 
@@ -57,9 +50,10 @@ const Timer = (props: StackProps) => {
         )
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [goals]);
   useEffect(() => {
-    if (tasksForOptions.length == 0) {
+    if (tasksForOptions.length === 0) {
       setSelectedTask(null);
     } else if (
       selectedTask !== null &&
@@ -67,6 +61,7 @@ const Timer = (props: StackProps) => {
     ) {
       setSelectedTask(tasksForOptions.length - 1);
     } else if (isGoalAchieved) setIsGoalAchieved(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasksForOptions]);
 
   useEffect(() => {
@@ -77,16 +72,7 @@ const Timer = (props: StackProps) => {
           (task) => task.status === STATUS.Done
         )
     );
-
-    // if (
-    //   selectedGoalIndex !== undefined &&
-    //   Array(...goals[selectedGoalIndex].tasks).every(
-    //     (task) => task.status === STATUS.Done
-    //   )
-    // ) {
-    //   setIsGoalAchieved(true);
-    //   timerDispatch({ type: "reset" });
-    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGoalIndex]);
 
   return (
@@ -94,12 +80,10 @@ const Timer = (props: StackProps) => {
       {...props}
       alignItems={"stretch"}
       justifyContent={isDisabled ? "start" : "space-between"}
-      margin={{ sm: "5" }}
-      marginY={{ base: "5" }}
+      margin={"5"}
       spacing="3"
-      // height={"10rem"}
     >
-      <Clock isDisabled={isDisabled} timerReducer={[timer, timerDispatch]} />
+      <Clock isDisabled={isDisabled} />
       {isGoalAchieved ? (
         <VStack minWidth={0} minHeight={0} justify={"center"} flex={1}>
           <Heading color={"teal"} textAlign={"center"}>
@@ -112,12 +96,10 @@ const Timer = (props: StackProps) => {
             Current task:
           </Text>
           <Select
-            // defaultValue={1}
             isDisabled={isDisabled}
             variant={"filled"}
             colorScheme={"teal"}
             fontSize={"xl"}
-            // textAlign={"center"}
             value={selectedTask ?? 0}
             onChange={(e) => {
               const value = Number(e.target.value) as number;
@@ -135,14 +117,13 @@ const Timer = (props: StackProps) => {
               })}
           </Select>
           <Button
+            marginTop={"auto !important"}
             isDisabled={isDisabled}
             colorScheme={"teal"}
             onClick={() => {
               if (selectedGoalIndex !== undefined && selectedTask !== null) {
                 const goal = goals[selectedGoalIndex];
                 if (tasksForOptions.length === 1) {
-                  console.log("SSSADSAA");
-
                   timerDispatch({ type: "reset" });
                   setIsGoalAchieved(true);
                 }
@@ -165,4 +146,4 @@ const Timer = (props: StackProps) => {
   );
 };
 
-export { Timer };
+export { TimerPanel };
