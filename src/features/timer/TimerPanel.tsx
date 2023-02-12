@@ -85,13 +85,23 @@ const TimerPanel = (props: StackProps) => {
     >
       <Clock isDisabled={isDisabled} />
       {isGoalAchieved ? (
-        <VStack minWidth={0} minHeight={0} justify={"center"} flex={1}>
+        <VStack
+          minWidth={"auto"}
+          minHeight={"auto"}
+          justify={"center"}
+          flex={1}
+        >
           <Heading color={"teal"} textAlign={"center"}>
             Goal achieved!
           </Heading>
         </VStack>
       ) : (
-        <VStack minWidth={0} minHeight={0} flex={1} alignItems={"stretch"}>
+        <VStack
+          minWidth={"auto"}
+          minHeight={"auto"}
+          flex={1}
+          alignItems={"stretch"}
+        >
           <Text fontSize={"md"} textAlign={"center"}>
             Current task:
           </Text>

@@ -72,16 +72,14 @@ const Clock = ({ isDisabled = false }: { isDisabled?: boolean }) => {
     <Flex
       alignItems={"center"}
       justifyContent={"center"}
-      minWidth={0}
-      minHeight={0}
       flex={3}
       userSelect={"none"}
+      minHeight={{ base: "17rem", sm: "20rem" }}
+      minWidth={{ base: "17rem", sm: "20rem" }}
     >
       <ClockCircle fraction={fraction}></ClockCircle>
-      <VStack position={"absolute"} spacing={{ base: "1", sm: "2" }}>
-        <Heading
-          fontSize={{ base: "7xl", sm: "8xl" }}
-        >
+      <VStack position={"absolute"} spacing={{ base: "0" }}>
+        <Heading fontSize={{ base: "7xl", sm: "8xl" }}>
           {timeDisplay.map((v) => v.toString().padStart(2, "0")).join(":")}
         </Heading>
         <Box
@@ -92,7 +90,7 @@ const Clock = ({ isDisabled = false }: { isDisabled?: boolean }) => {
         >
           <Text as={"b"}>{phase ? "WORK" : "BREAK"}</Text>
         </Box>
-        <HStack>
+        <HStack marginTop={"2 !important"}>
           {[
             {
               as: MdSkipNext,

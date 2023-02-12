@@ -46,12 +46,21 @@ const Main: React.FC = () => {
               height={"100%"}
               direction={{ base: "column-reverse", md: "row" }}
             >
-              <GoalList flex={{ base: "1" }} minWidth={0} minHeight={0} />
-              <Divider direction={DIR} />
+              <GoalList
+                flex={{ base: "1" }}
+                minWidth={"0"}
+                minHeight={{ base: "10rem" }}
+              />
+              <Divider
+                flexShrink={0}
+                minWidth={"0"}
+                minHeight={"auto"}
+                direction={DIR}
+              />
               <TimerPanel
                 flex={{ base: "2", md: "1" }}
-                minWidth={0}
-                minHeight={0}
+                minWidth={"0"}
+                minHeight={{ base: "auto", sm: "0" }}
               />
               <GoalModal
                 onCreate={(values) => {
