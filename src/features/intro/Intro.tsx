@@ -1,27 +1,15 @@
-import { Flex, Heading, Text, VStack } from "@chakra-ui/react";
-import { useContext } from "react";
-import { PasscodeContext } from "../../contexts";
-import { PasscodeForm } from "./PasscodeForm";
+import { Button, Flex, Heading, Text, VStack } from "@chakra-ui/react";
 
-// IMPORTANT:
-// This component is part of a feature that is not going to be implemented.
-// I'm keeping this code for potential use in the future, in case of
-// change in direction and further development.
-
-const Passcode = () => {
-  const passcodeContext = useContext(PasscodeContext);
-  if (!passcodeContext) throw Error("passcodeContext is undefined.");
-  const [passcode, setPasscode] = passcodeContext;
-
+const Intro = ({ onClick }: { onClick: () => void }) => {
   return (
     <Flex align={"center"} direction={"column"}>
       <VStack
         padding={"8"}
         margin={{ md: 4 }}
-        marginBottom={{ base: 32, md: 32 }}
         flex={1}
         backgroundColor={"teal.200"}
-        paddingX={{ sm: 8, md: 24 }}
+        paddingTop={{ sm: 8, md: 24 }}
+        paddingBottom={{ base: "4rem" }}
         borderTopRadius={{ md: "2xl" }}
         spacing={8}
         bgGradient={
@@ -38,7 +26,7 @@ const Passcode = () => {
           Welcome to <wbr />
           <i>Future Perfect!</i>
         </Heading>
-        <Text fontSize={{ base: "1rem", sm: "xl" }}>
+        <Text fontSize={{ base: "md", sm: "1.2rem", md: "xl" }}>
           Our app is here to help you achieve your daily goals and become more
           organized in the process. With Future Perfect, you can set your goals
           for the day and then split them into manageable tasks. You can then
@@ -48,18 +36,28 @@ const Passcode = () => {
           goals.
         </Text>
       </VStack>
-      <Flex
-        top={{ md: "10rem" }}
-        bottom={{ base: "2rem", md: "unset" }}
-        height={{ md: "full" }}
-        position={"absolute"}
-        justify={"center"}
-        alignItems={"center"}
+      <VStack
+        padding={4}
+        borderRadius={"xl"}
+        position={{ base: "relative" }}
+        bottom={"0"}
+        transform={"translateY(-50%)"}
+        backgroundColor={"white"}
+        shadow={["2xl", "2xl", "xl"]}
       >
-        <PasscodeForm shadow={"xl"} />
-      </Flex>
+        <Button
+          size={"lg"}
+          colorScheme="teal"
+          fontSize={"5xl"}
+          paddingY={2}
+          height={"auto"}
+          onClick={onClick}
+        >
+          Let's begin!
+        </Button>
+      </VStack>
     </Flex>
   );
 };
 
-export {};
+export { Intro };
