@@ -1,6 +1,19 @@
 import { FormikProps } from "formik";
 import { Goal } from "../types/Index";
 
+const getGoalsFromLS = () => {
+  const goalsLS = localStorage.getItem("goals");
+  if (!goalsLS) return undefined;
+  try {
+    const goalsLSParsed = JSON.parse(goalsLS);
+    if (Array.isArray(goalsLSParsed) && goalsLSParsed.length > 0) {
+      return goalsLSParsed;
+    }
+  } catch {
+    return undefined;
+  }
+};
+
 const handlePriorityAddition = (
   formikProps: FormikProps<Goal>,
   index: number,
@@ -37,4 +50,4 @@ const castPriorityToNumber = (
     return state;
   });
 };
-export { handlePriorityAddition, castPriorityToNumber };
+export { getGoalsFromLS, handlePriorityAddition, castPriorityToNumber };

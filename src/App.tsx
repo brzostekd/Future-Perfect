@@ -1,7 +1,13 @@
 import { Flex } from "@chakra-ui/layout";
+import { useEffect, useState } from "react";
+import { Intro } from "./features/intro/Intro";
 import { Main } from "./features/main/Main";
 
 function App() {
+  const [showIntro, setShowIntro] = useState(true);
+  useEffect(() => {
+    if (localStorage.getItem("goals")) setShowIntro(false);
+  }, []);
   return (
     <Flex
       justify={"center"}
@@ -26,7 +32,7 @@ function App() {
         height={{ base: "full", md: "xl" }}
         backgroundColor={"white"}
       >
-        <Main />
+        {showIntro ? <Intro onClick={() => setShowIntro(false)} /> : <Main />}
       </Flex>
     </Flex>
   );

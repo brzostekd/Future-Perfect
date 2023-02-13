@@ -1,4 +1,5 @@
 import { Flex, useBreakpointValue, useDisclosure } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { Divider } from "../../components/Divider";
 import {
   ModalContext,
@@ -10,16 +11,46 @@ import {
   TimerContext,
 } from "../../contexts";
 import { useModalReducer } from "../../contexts";
+import { Goal } from "../../types/Index";
+import { getGoalsFromLS } from "../../utils";
 import { GoalList } from "../goalList/GoalList";
 import { GoalModal } from "../goalModal/GoalModal";
 import { TimerPanel } from "../timer/TimerPanel";
-
 const Main: React.FC = () => {
   const [modal, dispatchModal] = useModalReducer();
   const modalDisclosure = useDisclosure();
   const [goals, dispatchGoals] = useGoalsReducer();
   const [selectedGoalIndex, setSelectedGoalIndex] = useSelectedGoalIndexState();
   const [timer, timerDispatch] = useTimerReducer();
+
+  const writeGoalsToLS = () => {
+    localStorage.setItem("goals", JSON.stringify(goals));
+  };
+
+  useEffect(() => {
+    localStorage.setItem("test", "tesst");
+    const goalsFromLS = getGoalsFromLS();
+    if (!goalsFromLS) return;
+    dispatchGoals({ type: "set", data: goalsFromLS });
+    for (let i = 0; i < goalsFromLS.length; i++) {
+      const element = goalsFromLS[i] as Goal;
+      if (element.is_current) {
+        setSelectedGoalIndex(i);
+        break;
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("visibilitychange", writeGoalsToLS);
+    // window.addEventListener("unload", writeGoalsToLS);
+    // window.addEventListener("beforeunload", writeGoalsToLS);
+    return () => {
+      document.removeEventListener("visibilitychange", writeGoalsToLS);
+      // window.removeEventListener("unload", writeGoalsToLS);
+      // window.removeEventListener("beforeunload ", writeGoalsToLS);
+    };
+  }, [goals]);
 
   const DIR =
     useBreakpointValue<"row" | "column">({

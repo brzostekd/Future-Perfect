@@ -57,6 +57,7 @@ const ModalContext = createContext<modalContextType | undefined>(undefined);
 
 const useGoalsReducer = () => {
   type Action =
+    | { type: "set"; data: Goal[] }
     | { type: "add" | "put"; data: Goal }
     | { type: "setCurrent" | "remove"; data: Pick<Goal, "id"> }
     | {
@@ -85,6 +86,8 @@ const useGoalsReducer = () => {
       taskIndex: ReturnType<typeof findIndex>;
     let newState = state.slice();
     switch (action.type) {
+      case "set":
+        return action.data;
       case "add":
         return newState.concat(action.data);
       case "remove":
