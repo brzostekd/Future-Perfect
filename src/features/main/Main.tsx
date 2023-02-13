@@ -1,5 +1,5 @@
 import { Flex, useBreakpointValue, useDisclosure } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Divider } from "../../components/Divider";
 import {
   ModalContext,
@@ -39,6 +39,7 @@ const Main: React.FC = () => {
         break;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
