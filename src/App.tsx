@@ -1,8 +1,9 @@
-import { Flex } from "@chakra-ui/layout";
+import { Box, Flex } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { Intro } from "./features/intro/Intro";
 import { Main } from "./features/main/Main";
-
+import { Image } from "@chakra-ui/react";
+import ribbon from "./svg/ribbon.svg";
 function App() {
   const [showIntro, setShowIntro] = useState(true);
   useEffect(() => {
@@ -27,12 +28,30 @@ function App() {
     >
       <Flex
         borderRadius={{ md: 32 }}
-        boxShadow={{ md: "2xl" }}
         width={{ base: "full", md: "4xl" }}
         height={{ base: "full", md: "xl" }}
         backgroundColor={"white"}
+        position={"relative"}
       >
-        {showIntro ? <Intro onClick={() => setShowIntro(false)} /> : <Main />}
+        <Box
+          width="inherit"
+          height="inherit"
+          borderRadius={"inherit"}
+          zIndex={3}
+          bgColor="inherit"
+          boxShadow={{ md: "2xl" }}
+        >
+          {showIntro ? <Intro onClick={() => setShowIntro(false)} /> : <Main />}
+        </Box>
+        <Image
+          bottom={"-16%"}
+          left={"23%"}
+          position={"absolute"}
+          transform={"rotate(4deg)"}
+          zIndex={1}
+          src={ribbon}
+          width={"12rem"}
+        ></Image>
       </Flex>
     </Flex>
   );

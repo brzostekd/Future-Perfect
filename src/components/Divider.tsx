@@ -9,8 +9,8 @@ const Divider: React.FC<{ direction: "row" | "column" } & FlexProps> = ({
     <Box
       {...flexProps}
       backgroundColor={"teal.500"}
-      width={direction === "column" ? 3 : "auto"}
-      height={direction === "column" ? "auto" : 3}
+      width={direction === "column" ? 4 : "auto"}
+      height={direction === "column" ? "auto" : 4}
     ></Box>
   );
 };
