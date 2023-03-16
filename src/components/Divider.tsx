@@ -1,9 +1,6 @@
 import { Box, FlexProps } from "@chakra-ui/react";
 import React from "react";
-// type Props = {
-//   ;
-//   flexProps?: FlexProps;
-// };
+
 const Divider: React.FC<{ direction: "row" | "column" } & FlexProps> = ({
   direction,
   ...flexProps
