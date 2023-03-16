@@ -44,6 +44,7 @@ function App() {
           {showIntro ? <Intro onClick={() => setShowIntro(false)} /> : <Main />}
         </Box>
         <Image
+          display={{ base: "none", md: "initial" }}
           bottom={"-16%"}
           left={"23%"}
           position={"absolute"}
