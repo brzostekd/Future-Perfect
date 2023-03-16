@@ -51,6 +51,7 @@ function App() {
           zIndex={1}
           src={ribbon}
           width={"12rem"}
+          draggable="false"
         ></Image>
       </Flex>
     </Flex>
