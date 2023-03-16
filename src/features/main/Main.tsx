@@ -44,12 +44,8 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     document.addEventListener("visibilitychange", writeGoalsToLS);
-    // window.addEventListener("unload", writeGoalsToLS);
-    // window.addEventListener("beforeunload", writeGoalsToLS);
     return () => {
       document.removeEventListener("visibilitychange", writeGoalsToLS);
-      // window.removeEventListener("unload", writeGoalsToLS);
-      // window.removeEventListener("beforeunload ", writeGoalsToLS);
     };
   }, [goals]);
 
