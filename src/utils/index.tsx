@@ -1,5 +1,5 @@
 import { FormikProps } from "formik";
-import { Goal } from "../types/Index";
+import { Goal, Task } from "../types/Index";
 
 const getGoalsFromLS = () => {
   const goalsLS = localStorage.getItem("goals");
@@ -12,6 +12,10 @@ const getGoalsFromLS = () => {
   } catch {
     return undefined;
   }
+};
+
+const sortTasks = (tasks: Task[]) => {
+  tasks.sort((first, second) => first.priority - second.priority);
 };
 
 const handlePriorityAddition = (
@@ -29,6 +33,7 @@ const handlePriorityAddition = (
           ? Number(state.tasks[index].priority) + value
           : state.tasks[index].priority + value;
       state.tasks[index].priority = calculated > 0 ? calculated : 1;
+      sortTasks(state.tasks);
       return state;
     });
   };
@@ -47,6 +52,7 @@ const castPriorityToNumber = (
           .sort()
           .splice(-1)[0] + 1;
     }
+    sortTasks(state.tasks);
     return state;
   });
 };

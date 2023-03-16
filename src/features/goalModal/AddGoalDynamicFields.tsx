@@ -12,7 +12,7 @@ import {
   NumberInputStepper,
 } from "@chakra-ui/react";
 import { ObjectId } from "bson";
-import { FieldArray, FormikProps, FastField } from "formik";
+import { FieldArray, FormikProps, FastField, Field } from "formik";
 import { useEffect, useState } from "react";
 import { Goal, STATUS } from "../../types/Index";
 import { castPriorityToNumber, handlePriorityAddition } from "../../utils";
@@ -67,7 +67,7 @@ const AddGoalDynamicFields = ({
                         }
                       >
                         {field === "priority" ? (
-                          <FastField
+                          <Field
                             as={NumberInput}
                             name={`tasks.${index}.${field}`}
                             min={1}
@@ -98,7 +98,7 @@ const AddGoalDynamicFields = ({
                                 )}
                               />
                             </NumberInputStepper>
-                          </FastField>
+                          </Field>
                         ) : (
                           <FastField
                             as={Input}
