@@ -4,7 +4,7 @@ Wypróbuj live na [GitHubPages](https://brzostekd.github.io/Future-Perfect/index
 
 ## Opis projektu
 
-Future Perfect to aplikacja internetowa, pozwalająca na zarządzanie czasem i osiąganie celów z wykorzystaniem techniki pomodoro. Użytkownicy tworzą cele i zadania, a następnie zaznaczają ich postęp, wykorzystując minutnik pomodoro. Aplikacja umożliwia także ustawianie priorytetów i śledzenie postępu w osiąganiu celów.
+Future Perfect to aplikacja internetowa, pozwalająca na zarządzanie czasem i osiąganie celów z wykorzystaniem techniki pomodoro. Użytkownik tworzy cele i zadania, a następnie zaznacza ich postęp, wspierany przez minutnik typu "pomodoro". Aplikacja umożliwia także ustawianie priorytetów i śledzenie postępu w osiąganiu celów.
 
 
 ## Instalacja i uruchomienie
